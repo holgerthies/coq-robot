@@ -25,7 +25,7 @@ Require Import tilt_mathcomp tilt_analysis tilt_robot ode_local.
 (* `is_equilibrium_point phi Init x`                                          *)
 (* : x is in Init and cst x satisfies sol_is_deriv                            *)
 (*                                                                            *)
-(* `state_space phi Init`                                                     *)
+(* `reachable_set phi Init`                                                   *)
 (* : the set points attainable by a solution of the autonomous ODE phi        *)
 (* : starting from Init                                                       *)
 (*                                                                            *)
@@ -170,29 +170,21 @@ Definition derive_along_partial {R : realType} n (V : 'rV[R]_n -> R)
     (a : R -> 'rV[R]_n) (t : R) : R :=
   \sum_(i < n) (partial V (a t) i * ('D_1 a t) ``_ i).
 
-Section state_space.
+Section reachable_set.
 Context {R : realType} {n} (U := 'rV[R]_n) (phi : U -> U).
 
-Definition state_space (Init : set U) : set U :=
+Definition reachable_set (Init : set U) : set U :=
   [set x | exists f D, [/\ f 0 \in Init,
-                           is_sol_cauchy_oo (fun=> phi) 0 D (f 0) f &
+    is_sol_cauchy_oo (fun=> phi) 0 D (f 0) f &
     exists2 t, t \in `[0, D[%R & x = f t]].
 
-End state_space.
+End reachable_set.
 
 Section equilibrium_point.
 Context {R : realType} {n} (U := 'rV[R]_n) (phi : U -> U).
 
 Definition is_equilibrium_point (x : U) :=
    sol_is_deriv (fun=> phi) `[0, +oo[%R (cst x).
-
-(* Lemma equilibrium_point_in_state_space (Init : set U) : *)
-(*   is_equilibrium_point Init `<=` state_space phi Init. *)
-(* Proof. *)
-(* move=> x solf; exists (cst x), 1; split => //=. *)
-(*   apply: sol_is_deriv_cy_co. *)
-(* by exists 0 => //; rewrite bound_itvE. *)
-(* Qed. *)
 
 Definition equilibrium_points Init := [set p | Init p /\ is_equilibrium_point p].
 

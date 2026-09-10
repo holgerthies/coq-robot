@@ -68,7 +68,7 @@ Qed.
 (* NB: not used *)
 Lemma point1_sublevelV1Upsilon1 p : sublevelV1Upsilon1 p Tilt.point1.
 Proof.
-split => /=; last by have /set_mem := @tilt_point1_in_state_space K.
+split => /=; last by have /set_mem := @tilt_point1_in_reachable_set K.
 rewrite /sublevelV1 /sublevel/= /Tilt.point1 /Tilt.V1.
 rewrite lsubmx_const rsubmx_const/= !enorm0 !expr0n /= !mul0r add0r.
 by rewrite addr_ge0// divr_ge0// ?sqr_ge0 ?mulr_ge0// ltW.
@@ -153,7 +153,7 @@ have contained :  forall b sol,
         [set sol x | x in `[0, b[] `<=` (@sublevelV1Upsilon1 y0).
   move=> t y' [init [solp cont]] y1 [t0 /= t0t <-].
   split; last first.
-    apply/(@tilt_state_spaceS  _ alpha1 gamma).
+    apply/(@tilt_reachable_setS  _ alpha1 gamma).
     exists y', t; split; rewrite ?init//=.
     by exists t0.
   rewrite /sublevelV1 /sublevel/=.
@@ -341,7 +341,7 @@ Proof.
 rewrite /is_invariant/= => /= x.
 rewrite /sublevelV1Upsilon1/= =>  -[Vx Kx] t t0.
 split; last first.
-  apply/(@tilt_state_spaceS  _ alpha1 gamma).
+  apply/(@tilt_reachable_setS  _ alpha1 gamma).
   exists (tilt_sol x), (t + 1) => /=. (* use large enough time *)
   split.
   - by rewrite tilt_sol0; exact/mem_set.
@@ -642,7 +642,7 @@ have H : lasalle.limS tilt_sol (sublevelV1Upsilon1 p) `<=`
     rewrite (closure_id (sublevelV1Upsilon1 q)).1.
       apply compact_closed => //.
       exact: compact_sublevelV1Upsilon1.
-    have qs (t : K) : 0 <= t -> state_space phi (sublevelV1Upsilon1 q) (tilt_sol q t).
+    have qs (t : K) : 0 <= t -> reachable_set phi (sublevelV1Upsilon1 q) (tilt_sol q t).
       move=> t0; exists (tilt_sol q), (t + 1); split.
       + by rewrite tilt_sol0; apply: mem_sublevelV1Upsilon1; case: qKsub.
         by apply isSol_oo; rewrite inE; apply qKsub.
@@ -680,9 +680,9 @@ suff : Tilt.points = [set x : 'rV[K]_6 | V1dot  x = 0] `&` Tilt.Upsilon1.
   by apply tilt_limS_subset_V1dot0.
 apply/seteqP; split => x /=.
   case => ->; split; [exact: V1dot_point1_eq0 | | exact: V1dot_point2_eq0 |].
-    have := @tilt_point1_in_state_space K.
+    have := @tilt_point1_in_reachable_set K.
     by rewrite inE.
-  have := @tilt_point2_in_state_space K.
+  have := @tilt_point2_in_reachable_set K.
   by rewrite inE.
 move => [h1 h2'].
 have h2 : x \in Tilt.Upsilon1 by rewrite inE.

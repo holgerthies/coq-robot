@@ -806,21 +806,23 @@ Hypothesis solutions_in_K : forall b sol,
 
 (* TODO: rename to compact_is_sol_cauchy_infty? *)
 
-Let no_ub : ~ has_ubound (valid_right_endpoints phi a u0). 
+Let no_ub : ~ has_ubound (valid_right_endpoints phi a u0).
 Proof.
 suff : ~ has_sup (valid_right_endpoints phi a u0).
  by apply contra_not => hub; split=>//; exact: valid_right_endpoints_nonempty.
 exact: (compact_containment_no_sup compactK).
 Qed.
 
-Definition global_sol := sval (cid (no_ub_global_sol phi_continuous phi_locally_lipschitz no_ub)).
+Definition global_sol :=
+  sval (cid (no_ub_global_sol phi_continuous phi_locally_lipschitz no_ub)).
 
-Lemma compact_is_sol_cauchy_infty :
+Theorem compact_is_sol_cauchy_infty :
   is_sol_cauchy phi a +oo%O u0 global_sol.
 Proof. exact: svalP. Qed.
-  
-Lemma compact_sol_right_derivable : 
-    (h^-1 *: (global_sol (a + h) - global_sol a)) @[h --> 0^'+] --> phi a (global_sol a).
+
+Lemma compact_sol_right_derivable :
+  (h^-1 *: (global_sol (a + h) - global_sol a)) @[h --> 0^'+]
+    --> phi a (global_sol a).
 Proof.
 have [init [sol_is_deriv_f cont]] := compact_is_sol_cauchy_infty.
 have allsol : forall b, is_sol_cauchy_oo phi a b u0 global_sol.
@@ -1313,7 +1315,7 @@ Hypothesis Bz : z @` `[a, b] `<=` B.
 
 Let lm := @lebesgue_measure R.
 
-Lemma continuous_dependence t : t \in `[a, b] ->
+Theorem continuous_dependence t : t \in `[a, b] ->
   `|y t - z t| <= `|u0 - v0| * expR (k%:num * (t - a)).
 Proof.
 move=>tab.

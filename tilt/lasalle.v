@@ -1,4 +1,3 @@
-(* LaSalle (c) 2025--2026 Inria and AIST. Licence: CeCILL-C.                  *)
 (* -------------------------------------------------------------------------- *)
 (* Copyright (c) - 2017 -- 2019 Inria                                         *)
 (* -------------------------------------------------------------------------- *)
@@ -8,6 +7,20 @@ From mathcomp Require Import order interval_inference.
 From mathcomp Require Import fintype bigop ssralg ssrnum finmap interval ssrint.
 From mathcomp Require Import boolp reals classical_sets functions.
 From mathcomp Require Import topology normedtype landau derive.
+
+(**md**************************************************************************)
+(* # Formalization of LaSalle's invariance principle                          *)
+(*                                                                            *)
+(* `is_invariant A`                                                           *)
+(* : the set `A` is invariant                                                 *)
+(*                                                                            *)
+(* `symemtric_sol y`                                                          *)
+(* : the function y is symmetric w.r.t. its initial value                     *)
+(*                                                                            *)
+(* `is_sol phi y`                                                             *)
+(* : the function `y` is a solution of the ODE `phi` for non-negative times   *)
+(*                                                                            *)
+(******************************************************************************)
 
 Set Implicit Arguments.
 Unset Strict Implicit.
@@ -206,7 +219,7 @@ Definition is_invariant {R : realType} {U : normedModType R} (f : U -> R -> U)
     (A : set U) :=
   forall p, A p -> forall t, (0 <= t)%R -> A (f p t).
 
-Lemma cvg_to_limS {R : realType} {U : normedModType R} (sol : U -> R -> U)
+Theorem cvg_to_limS {R : realType} {U : normedModType R} (sol : U -> R -> U)
     (A : set U) : compact A -> is_invariant sol A ->
   forall p, A p -> sol p @ +oo%R --> (limS sol A : set U).
 Proof.
@@ -253,8 +266,10 @@ Local Open Scope ring_scope.
 
 Section definitions_to_apply_LaSalle.
 
-Definition is_sol (y : R -> U) :=
-  (forall t, t < 0 -> y t = 2 *: (y 0) - (y (- t))) /\
+Definition symmetric_sol (y : R -> U) :=
+  forall t, t < 0 -> y t = 2 *: (y 0) - (y (- t)).
+
+Definition is_sol (y : R -> U) := symmetric_sol y /\
   forall t, 0 <= t -> is_derive (t : R^o) 1 y (phi (y t)).
 
 (* K: compact set used in LaSalle's invariance principle *)
@@ -442,7 +457,7 @@ by exists q => //; apply: invariant_plim => //; apply: sAK.
 Qed.
 
 (* NB: use directional derivative? *)
-Lemma stable_limS (V : U -> R^o) :
+Theorem stable_limS (V : U -> R^o) :
   {within K, continuous V} ->
   (forall p t, K p -> (0 <= t)%R -> derivable (V \o sol p : R^o -> R^o) t 1) ->
   (forall (p : U), K p -> (V \o sol p)^`() 0 <= 0)%R ->

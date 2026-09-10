@@ -491,7 +491,7 @@ exists 1%:pos.
 exact: tilt_eqn_locally_lipschitz_new.
 Qed.
 
-Lemma tilt_state_spaceS : state_space phi Tilt.Upsilon1 `<=` Tilt.Upsilon1.
+Lemma tilt_reachable_setS : reachable_set phi Tilt.Upsilon1 `<=` Tilt.Upsilon1.
 Proof.
 move => p [y [D /= [y0_init1 [_ [deri cont]]]]].
 have [D0|D0] := leP 0 D; last first.
@@ -600,7 +600,7 @@ rewrite inE /Tilt.Upsilon1 /= => ->.
 by rewrite expr2 mulr1.
 Qed.
 
-Lemma tilt_point1_in_state_space : @Tilt.point1 R \in Tilt.Upsilon1.
+Lemma tilt_point1_in_reachable_set : @Tilt.point1 R \in Tilt.Upsilon1.
 Proof.
 rewrite inE /Tilt.Upsilon1 /Tilt.point1/=.
  by rewrite rsubmx_const /= subr0 enormeE.
@@ -620,7 +620,7 @@ split.
   by move=> N0; rewrite N0 scaler0 mul0mx.
 Qed.
 
-Lemma tilt_point2_in_state_space : @Tilt.point2 R \in Tilt.Upsilon1.
+Lemma tilt_point2_in_reachable_set : @Tilt.point2 R \in Tilt.Upsilon1.
 Proof.
 rewrite inE /Tilt.Upsilon1 /Tilt.point2 /=.
 rewrite row_mxKr.
@@ -844,7 +844,7 @@ move => /(congr1 Right).
 by rewrite derive1E row_mxKr => ?; rewrite derive_rsubmx.
 Qed.
 
-Lemma is_sol_state_space_tilt (D : R) f t :
+Lemma is_sol_reachable_set_tilt (D : R) f t :
   t \in `[0, D[%R ->
   f 0 \in Tilt.Upsilon1 ->
   is_sol_cauchy_oo (fun=> phi) 0 D (f 0) f ->
@@ -854,7 +854,7 @@ move=> + f0 deriv_f.
 rewrite in_itv/= => /andP[].
 rewrite le_eqVlt => /predU1P[<- D0|t0 tD].
   exact/set_mem.
-apply: (@tilt_state_spaceS _ alpha1 gamma) => //=.
+apply: (@tilt_reachable_setS _ alpha1 gamma) => //=.
 exists f, D; split => //=.
 exists t => //.
 by rewrite in_itv/= (ltW t0) tD.
@@ -870,7 +870,7 @@ move=> z0D sol0 sol_f.
 suff: Tilt.Upsilon1 (row_mx (zp1 z) (z2 z)).
   by rewrite /Tilt.Upsilon1/= row_mxKr.
 rewrite /zp1 /z2 hsubmxK /=.
-exact: (is_sol_state_space_tilt z0D).
+exact: (is_sol_reachable_set_tilt z0D).
 Qed.
 
 Lemma angvel_sqr (D : R) (f : R -> 'rV_6) z
@@ -916,7 +916,7 @@ rewrite mulmxN enormN.
 pose zp1 := fun r => Left (f r).
 pose z2 := fun r => Right (f r).
 set w := (z2 z) *m \S('e_2).
-have Upsilon1_traj : Tilt.Upsilon1 (f z) by apply/(is_sol_state_space_tilt z0D).
+have Upsilon1_traj : Tilt.Upsilon1 (f z) by apply/(is_sol_reachable_set_tilt z0D).
 rewrite /enorm.
 rewrite !dotmulvv [RHS]sqrtr_sqr sqrtr_sqr.
 have Hnorm_sq : `|w *m \S('e_2 - Right (f z))|_e ^+ 2 = `|w|_e ^+ 2.
@@ -1063,7 +1063,7 @@ suff [-> | -> ] : Right (f t) = 0 \/ Right (f t) = (2 *: 'e_2).
   case: splitP => // k _;by rewrite !mxE.
   right;apply /matrixP => i j;rewrite mxE.
   by case: splitP => // k _.
-have := is_sol_state_space_tilt t0d f0 fP.
+have := is_sol_reachable_set_tilt t0d f0 fP.
 rewrite /Tilt.Upsilon1/=.
 have /sub_rVP [k ->] : (Right (f t) <= ('e_2 : 'rV_3))%MS.
   apply: (@submx_trans _ _ _ _ _ _ (kermx \S('e_2))).
