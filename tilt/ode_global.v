@@ -941,10 +941,10 @@ Unshelve. all: by end_near. Qed.
 
 
 
-Lemma global_solution_unique f f' :
+Lemma global_solution_unique f g :
   is_sol_cauchy phi a +oo%O u0 f ->
-  is_sol_cauchy phi a +oo%O u0 f' ->
-  {in `[a, +oo[%R, f =1 f'}.
+  is_sol_cauchy phi a +oo%O u0 g ->
+  {in `[a, +oo[%R, f =1 g}.
 Proof.
 move=> /is_sol_cauchy_inftyP h1 /is_sol_cauchy_inftyP h2 t tp.
 apply: (@locally_cauchy_lipschitz_unique _ _ phi a (t + 1) u0) => //.
